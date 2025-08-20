@@ -2,6 +2,7 @@ import sqlite3
 
 def init_db(db_name="leds.db"):
     conn = sqlite3.connect(db_name)
+    conn.execute("PRAGMA foreign_keys = ON")  # enable cascading deletes
     cursor = conn.cursor()
 
     # Config table
