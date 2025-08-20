@@ -31,8 +31,8 @@ def init_db(db_name="leds.db"):
         cid INTEGER NOT NULL,
         aid INTEGER NOT NULL,
         start INTEGER,
-        FOREIGN KEY (cid) REFERENCES Config(cid),
-        FOREIGN KEY (aid) REFERENCES Animation(aid)
+        FOREIGN KEY (cid) REFERENCES Config(cid) ON DELETE CASCADE,
+        FOREIGN KEY (aid) REFERENCES Animation(aid) ON DELETE CASCADE
     );
     """)
 
