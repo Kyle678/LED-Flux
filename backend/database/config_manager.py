@@ -1,12 +1,10 @@
 import sqlite3
 
-DB_NAME = "animations.db"
-
 # -----------------------
 # CREATE
 # -----------------------
-def create_config(name, description=None):
-    conn = sqlite3.connect(DB_NAME)
+def create_config(db_name, name, description=None):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO Config (name, description) VALUES (?, ?)",
@@ -20,8 +18,8 @@ def create_config(name, description=None):
 # -----------------------
 # READ
 # -----------------------
-def get_config(cid):
-    conn = sqlite3.connect(DB_NAME)
+def get_config(db_name, cid):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT cid, name, description FROM Config WHERE cid = ?", (cid,))
     row = cursor.fetchone()
@@ -30,8 +28,8 @@ def get_config(cid):
         return {"cid": row[0], "name": row[1], "description": row[2]}
     return None
 
-def get_all_configs():
-    conn = sqlite3.connect(DB_NAME)
+def get_all_configs(db_name):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT cid, name, description FROM Config")
     rows = cursor.fetchall()
@@ -41,8 +39,8 @@ def get_all_configs():
 # -----------------------
 # UPDATE
 # -----------------------
-def update_config(cid, name=None, description=None):
-    conn = sqlite3.connect(DB_NAME)
+def update_config(db_name, cid, name=None, description=None):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     # Only update provided fields
     if name and description:
@@ -59,13 +57,13 @@ def update_config(cid, name=None, description=None):
         return False  # nothing to update
     conn.commit()
     conn.close()
-    return True
+    return get_config(db_name, cid)
 
 # -----------------------
 # DELETE
 # -----------------------
-def delete_config(cid):
-    conn = sqlite3.connect(DB_NAME)
+def delete_config(db_name, cid):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM Config WHERE cid = ?", (cid,))
     conn.commit()

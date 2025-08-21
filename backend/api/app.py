@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from database.db_manager import *
+from backend.database.db_manager import *
 
 app = Flask(__name__)
 CORS(app)  # Enable if frontend runs on a different port
@@ -80,37 +80,6 @@ def api_delete_animation(aid):
     return jsonify({"message": f"Animation {aid} deleted"}), 200
 
 # -----------------------
-# PARAMETER ROUTES
-# -----------------------
-@app.route("/animations/<int:aid>/parameters", methods=["POST"])
-def api_add_parameter(aid):
-    data = request.json
-    key = data.get("key")
-    value = data.get("value")
-    if not key or value is None:
-        return jsonify({"error": "Key and value are required"}), 400
-    pid = add_parameter(aid, key, value)
-    return jsonify({"parameter_id": pid, "key": key, "value": value})
-
-@app.route("/animations/<int:aid>/parameters", methods=["GET"])
-def api_get_parameters(aid):
-    return jsonify(get_parameters(aid))
-
-@app.route("/animations/<int:aid>/parameters/<string:key>", methods=["PUT"])
-def api_update_parameter(aid, key):
-    data = request.json
-    value = data.get("value")
-    if value is None:
-        return jsonify({"error": "Value is required"}), 400
-    update_parameter(aid, key, value)
-    return jsonify({key: value})
-
-@app.route("/animations/<int:aid>/parameters/<string:key>", methods=["DELETE"])
-def api_delete_parameter(aid, key):
-    delete_parameter(aid, key)
-    return jsonify({"message": f"Parameter {key} deleted from animation {aid}"}), 200
-
-# -----------------------
 # RELATION ROUTES (optional)
 # -----------------------
 @app.route("/relations", methods=["POST"])
@@ -130,6 +99,37 @@ def api_get_relations():
 def api_delete_relation(rid):
     delete_relation(rid)
     return jsonify({"message": f"Relation {rid} deleted"}), 200
+
+# -----------------------
+# PARAMETER ROUTES
+# -----------------------
+@app.route("/animations/<int:aid>/parameters", methods=["POST"])
+def api_add_parameter(aid):
+    data = request.json
+    key = data.get("key")
+    value = data.get("value")
+    if not key or value is None:
+        return jsonify({"error": "Key and value are required"}), 400
+    pid = create_parameter(aid, key, value)
+    return jsonify({"parameter_id": pid, "key": key, "value": value})
+
+@app.route("/animations/<int:aid>/parameters", methods=["GET"])
+def api_get_parameters(aid):
+    return jsonify(get_parameters(aid))
+
+@app.route("/animations/<int:aid>/parameters/<string:key>", methods=["PUT"])
+def api_update_parameter(aid, key):
+    data = request.json
+    value = data.get("value")
+    if value is None:
+        return jsonify({"error": "Value is required"}), 400
+    update_parameter(aid, key, value)
+    return jsonify({key: value})
+
+@app.route("/animations/<int:aid>/parameters/<string:key>", methods=["DELETE"])
+def api_delete_parameter(aid, key):
+    delete_parameter(aid, key)
+    return jsonify({"message": f"Parameter {key} deleted from animation {aid}"}), 200
 
 # -----------------------
 # Run server

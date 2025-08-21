@@ -1,12 +1,14 @@
 import sqlite3
 
-DB_NAME = "leds.db"
-
 # -----------------------
 # RELATION CRUD
 # -----------------------
-def create_relation(cid, aid, start=None):
-    conn = sqlite3.connect(DB_NAME)
+
+# -----------------------
+# CREATE
+# -----------------------
+def create_relation(db_name, cid, aid, start=None):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO Relation (cid, aid, start) VALUES (?, ?, ?)",
@@ -17,8 +19,11 @@ def create_relation(cid, aid, start=None):
     conn.close()
     return rid
 
-def get_relation(rid):
-    conn = sqlite3.connect(DB_NAME)
+# -----------------------
+# READ
+# -----------------------
+def get_relation(db_name, rid):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT id, cid, aid, start FROM Relation WHERE id = ?", (rid,))
     row = cursor.fetchone()
@@ -27,16 +32,19 @@ def get_relation(rid):
         return {"id": row[0], "cid": row[1], "aid": row[2], "start": row[3]}
     return None
 
-def get_all_relations():
-    conn = sqlite3.connect(DB_NAME)
+def get_all_relations(db_name):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT id, cid, aid, start FROM Relation")
     rows = cursor.fetchall()
     conn.close()
     return [{"id": r[0], "cid": r[1], "aid": r[2], "start": r[3]} for r in rows]
 
-def update_relation(rid, cid=None, aid=None, start=None):
-    conn = sqlite3.connect(DB_NAME)
+# -----------------------
+# UPDATE
+# -----------------------
+def update_relation(db_name, rid, cid=None, aid=None, start=None):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     fields = []
     values = []
@@ -57,10 +65,13 @@ def update_relation(rid, cid=None, aid=None, start=None):
     cursor.execute(sql, values)
     conn.commit()
     conn.close()
-    return True
+    return get_relation(db_name, rid)
 
-def delete_relation(rid):
-    conn = sqlite3.connect(DB_NAME)
+# -----------------------
+# DELETE
+# -----------------------
+def delete_relation(db_name, rid):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM Relation WHERE id = ?", (rid,))
     conn.commit()

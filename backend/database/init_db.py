@@ -43,6 +43,7 @@ def init_db(db_name="leds.db"):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         animation_id INTEGER NOT NULL,
         key TEXT NOT NULL,
+        type TEXT NOT NULL,
         int_value INTEGER,
         float_value REAL,
         text_value TEXT,
@@ -54,5 +55,3 @@ def init_db(db_name="leds.db"):
     conn.commit()
     conn.close()
     print(f"Database '{db_name}' initialized successfully.")
-
-

@@ -1,6 +1,6 @@
-from api.app import app
-from database.init_db import init_db
+from backend.api.app import app
+from backend.database.db_manager import initialize_database
 
 if __name__ == "__main__":
-    init_db()
+    initialize_database()
     app.run(debug=True)
