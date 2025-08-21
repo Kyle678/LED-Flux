@@ -4,10 +4,12 @@ from backend.database.config_manager import *
 from backend.database.parameter_manager import *
 from backend.database.relation_manager import *
 
+import os
+
 class DatabaseManager:
     def __init__(self, db_name="leds.db"):
-        self.db_name = db_name
-        init_db(db_name)
+        self.db_name = os.path.join("backend", "database", db_name)
+        init_db(self.db_name)
 
     # Config methods
     def create_config(self, name, description):
