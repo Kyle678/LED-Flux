@@ -1,3 +1,14 @@
 LED-vault
 backend/venv
-*/__pycache__
+
+.pytest_cache/
+
+*.db
+
+# Ignore Python cache
+__pycache__/
+*/__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
