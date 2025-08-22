@@ -1,5 +1,5 @@
 LED-vault
-backend/venv
+backend/venv/
 
 .pytest_cache/
 
