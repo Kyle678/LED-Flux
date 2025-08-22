@@ -1,6 +1,9 @@
 from backend.api.app import app
 from backend.database.db_manager import initialize_database
 
-if __name__ == "__main__":
-    initialize_database()
-    app.run(debug=True)
+class Controller:
+    def __init__ (self, config_file):
+        self.config_file = config_file
+        self.config = self.load_config()
+        initialize_database("ledflux.db")
+        self.app = app
