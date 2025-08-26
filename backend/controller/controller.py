@@ -4,6 +4,36 @@ import board
 import configparser
 from backend.database.db_manager import DatabaseManager
 
+class Sequence:
+    def __init__(self, name, description, length, type_):
+        self.name
+        self.description = description
+        self.length = length
+        self.type = type_
+
+    def update(self):
+        # Placeholder for update logic
+        pass
+
+
+
+class SequenceManager:
+    def __init__(self):
+        self.sequences = []
+
+    def add_sequence(self, sequence):
+        self.sequences.append(sequence)
+
+    def remove_sequence(self, sequence):
+        self.sequences.remove(sequence)
+
+    def get_sequences(self):
+        return self.sequences
+    
+    def update(self):
+        for sequence in self.sequences:
+            sequence.update()
+
 class Controller:
     def __init__ (self, config_file):
         self.db = DatabaseManager('ledflux.db')
@@ -14,6 +44,14 @@ class Controller:
         self.flask_host = self.config.get('flask', 'host', fallback='0.0.0.0')
         self.flask_port = self.config.getint('flask', 'port', fallback=5000)
         self.pixels = neopixel.NeoPixel(self.pin, self.num_pixels, brightness=self.brightness, auto_write=False)
+
+        self.sequence_manager = SequenceManager()
+
+    def __getitem__(self, index):
+        return self.pixels[index]
+    
+    def __setitem__(self, index, value):
+        self.pixels[index] = value
 
     def load_config(self):
         try:
@@ -50,8 +88,7 @@ class Controller:
         self.pixels.show()
 
     def update(self):
-        # Placeholder for update logic
-        pass
+        self.sequence_manager.update()
 
     def loop(self):
         while True:
