@@ -1,10 +1,6 @@
 from flask import Blueprint, jsonify, request
 from backend.database.db_manager import DatabaseManager
 
-bp_db = Blueprint("api", __name__)
-
-db = DatabaseManager('ledflux.db')
-
 def create_db_blueprint(db_filename):
     bp_db = Blueprint("db_api", __name__)
     db = DatabaseManager(db_filename)
