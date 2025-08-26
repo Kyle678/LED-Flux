@@ -10,6 +10,7 @@ class Sequence:
         self.description = description
         self.length = length
         self.type = type_
+        self.pixels = [(0, 0, 0)] * length
 
     def update(self):
         # Placeholder for update logic
