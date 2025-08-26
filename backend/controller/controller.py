@@ -2,11 +2,17 @@ import json
 import neopixel
 import board
 import configparser
+from backend.database.db_manager import DatabaseManager
 
 class Controller:
     def __init__ (self, config_file):
+        self.db = DatabaseManager('ledflux.db')
         self.config_file = config_file
         self.config = self.load_config()
+        self.num_pixels = self.config.getint('pixels', 'num_pixels', fallback=30)
+        self.brightness = self.config.getfloat('pixels', 'brightness', fallback=0.5)
+        self.flask_host = self.config.get('flask', 'host', fallback='0.0.0.0')
+        self.flask_port = self.config.getint('flask', 'port', fallback=5000)
         self.pixels = neopixel.NeoPixel(self.pin, self.num_pixels, brightness=self.brightness, auto_write=False)
 
     def load_config(self):
@@ -19,8 +25,6 @@ class Controller:
                 self.pin = board.D21
             if self.pin_number != 18 and self.pin_number != 21:
                 raise ValueError("Invalid pin number. Only 18 and 21 are supported.")
-            self.num_pixels = config.getint('pixels', 'num_pixels', fallback=30)
-            self.brightness = config.getfloat('pixels', 'brightness', fallback=0.5)
             return config
         except FileNotFoundError:
             return FileNotFoundError("Configuration file not found.")
@@ -28,6 +32,35 @@ class Controller:
     def fill(self, color):
         self.pixels.fill(color)
 
+    def setPixels(self, pixels, start = 0):
+        self[start:start+len(pixels)] = pixels
+
+    def clear(self):
+        self.pixels.fill((0, 0, 0))
+
+    def off(self):
+        self.clear()
+        self.pixels.show()
+
+    def setPixels(self, pixels):
+        for i in range(min(len(pixels), self.num_pixels)):
+            self.pixels[i] = pixels[i]
+
     def show(self):
         self.pixels.show()
+
+    def update(self):
+        # Placeholder for update logic
+        pass
+
+    def loop(self):
+        while True:
+            self.update()
+            self.show()
+
+    def getFlaskHost(self):
+        return self.flask_host
+    
+    def getFlaskPort(self):
+        return self.flask_port  
         

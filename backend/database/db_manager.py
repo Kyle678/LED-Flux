@@ -9,7 +9,8 @@ import os
 class DatabaseManager:
     def __init__(self, db_name="leds.db"):
         self.db_name = os.path.join("backend", "database", db_name)
-        init_db(self.db_name)
+        if not os.path.exists(self.db_name):
+            init_db(self.db_name)
 
     # Config methods
     def create_config(self, name, description):
@@ -17,6 +18,9 @@ class DatabaseManager:
 
     def get_config(self, cid):
         return get_config(self.db_name, cid)
+
+    def get_all_configs(self):
+        return get_all_configs(self.db_name)
     
     def update_config(self, cid, name=None, description=None):
         return update_config(self.db_name, cid, name, description)

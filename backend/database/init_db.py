@@ -54,4 +54,4 @@ def init_db(db_name="leds.db"):
 
     conn.commit()
     conn.close()
-    print(f"Database '{db_name}' initialized successfully.")
+    print(f"Database '{db_name}' initialized successfully")
