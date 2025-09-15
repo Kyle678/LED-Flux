@@ -2,38 +2,34 @@ import json
 import neopixel
 import board
 import configparser
+import threading
+import time
+
 from backend.database.db_manager import DatabaseManager
 
-class Sequence:
-    def __init__(self, name, description, length, type_):
-        self.name
-        self.description = description
-        self.length = length
-        self.type = type_
-        self.pixels = [(0, 0, 0)] * length
+class AnimationManager:
+    def __init__(self, num_pixels):
+        self.animation_wrappers = []
+        self.animation_threads = {}
+        self.pixels = [(0, 0, 0)] * num_pixels
 
-    def update(self):
-        # Placeholder for update logic
-        pass
+    def add_animation_wrapper(self, animation_wrapper):
+        self.animation_wrappers.append(animation_wrapper)
 
+        if animation_wrapper.animation not in self.animation_threads:
+            animation_thread = threading.Thread(target = animation_wrapper.animation.loop, daemon=True)
+            self.animation_threads[animation_wrapper.animation] = animation_thread
+            animation_thread.start()
 
+    def remove_animation_wrapper(self, animation_wrapper):
+        self.animation_wrappers.remove(animation_wrapper)
 
-class SequenceManager:
-    def __init__(self):
-        self.sequences = []
-
-    def add_sequence(self, sequence):
-        self.sequences.append(sequence)
-
-    def remove_sequence(self, sequence):
-        self.sequences.remove(sequence)
-
-    def get_sequences(self):
-        return self.sequences
+    def get_animation_wrappers(self):
+        return self.animation_wrappers
     
     def update(self):
-        for sequence in self.sequences:
-            sequence.update()
+        for animation_wrapper in self.animation_wrappers:
+            self.pixels[animation_wrapper.start_index:animation_wrapper.start_index + animation_wrapper.length] = animation_wrapper.animation.get_pixels()
 
 class Controller:
     def __init__ (self, config_file):
@@ -46,13 +42,20 @@ class Controller:
         self.flask_port = self.config.getint('flask', 'port', fallback=5000)
         self.pixels = neopixel.NeoPixel(self.pin, self.num_pixels, brightness=self.brightness, auto_write=False)
 
-        self.sequence_manager = SequenceManager()
+        self.animation_manager = AnimationManager(self.num_pixels)
 
     def __getitem__(self, index):
         return self.pixels[index]
     
     def __setitem__(self, index, value):
         self.pixels[index] = value
+
+    def add_animation_wrapper(self, animation_wrapper):
+        self.animation_manager.add_animation_wrapper(animation_wrapper)
+
+    def add_animation_wrappers(self, animation_wrappers):
+        for wrapper in animation_wrappers:
+            self.add_animation_wrapper(wrapper)
 
     def load_config(self):
         try:
@@ -89,7 +92,8 @@ class Controller:
         self.pixels.show()
 
     def update(self):
-        self.sequence_manager.update()
+        self.animation_manager.update()
+        self.setPixels(self.animation_manager.pixels)
 
     def loop(self):
         while True:
