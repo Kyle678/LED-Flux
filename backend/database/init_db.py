@@ -21,7 +21,7 @@ def init_db(db_name="leds.db"):
         name TEXT NOT NULL,
         description TEXT,
         length INTEGER,
-        type TEXT
+        params TEXT
     );
     """)
 
@@ -34,21 +34,6 @@ def init_db(db_name="leds.db"):
         start INTEGER,
         FOREIGN KEY (cid) REFERENCES Config(cid) ON DELETE CASCADE,
         FOREIGN KEY (aid) REFERENCES Animation(aid) ON DELETE CASCADE
-    );
-    """)
-
-    # Parameter table (key-value with typed columns)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS Parameter (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        animation_id INTEGER NOT NULL,
-        key TEXT NOT NULL,
-        type TEXT NOT NULL,
-        int_value INTEGER,
-        float_value REAL,
-        text_value TEXT,
-        bool_value INTEGER, -- use 0/1 for false/true
-        FOREIGN KEY (animation_id) REFERENCES Animation(aid)
     );
     """)
 

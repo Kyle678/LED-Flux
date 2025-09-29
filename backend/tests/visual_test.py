@@ -8,7 +8,7 @@ import time, threading
 
 @pytest.mark.manual
 @pytest.mark.visual
-#@pytest.mark.basic
+@pytest.mark.basic
 def test_basic_visual_inspection():
     controller = Controller('config.ini')
     controller.fill((50, 0, 0))
@@ -45,13 +45,15 @@ def test_rainbow_visual_inspection():
     controller = Controller('config.ini')
 
     rainbow_animation = RotateAnimation(length=300,
-                                       type_='rainbow',
-                                       params={'step': 1,
-                                               'colors': [(50, 0, 0), (0, 50, 0), (0, 0, 50)],
-                                               'gradient': True,
-                                               'wrap': True,
-                                               'speed': 50
-    })
+                                        type_='rainbow',
+                                        params={ 'step': 1,
+                                                'colors': [(50, 0, 10), (10, 0, 50)],
+                                                'gradient': True,
+                                                'wrap': True,
+                                                'speed': 100,
+                                                'syncronous': True,
+                                                'repeat_interval': 20
+                                        })
 
     ra1 = AnimationWrapper(rainbow_animation, 0)
     ra2 = AnimationWrapper(rainbow_animation, 300)

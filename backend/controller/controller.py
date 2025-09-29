@@ -55,7 +55,7 @@ class Controller:
 
     def add_animation_wrappers(self, animation_wrappers):
         for wrapper in animation_wrappers:
-            self.add_animation_wrapper(wrapper)
+            self.animation_manager.add_animation_wrapper(wrapper)
 
     def load_config(self):
         try:

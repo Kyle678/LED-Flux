@@ -10,13 +10,11 @@ def generate_pixels(length, colors=None, gradient=False, loop=True, step=0):
     #fix step and everything yada yada yada...
 
 def rotate(pixels, steps=1):
-    length = len(pixels)
-    steps = steps % length
+    steps = steps % len(pixels)
     pixels[:] = pixels[-steps:] + pixels[:-steps]
 
-def rotate_new(pixels, steps=1):
-    length = len(pixels)
-    steps = steps % length
+def rotate_copy(pixels, steps=1):
+    steps = steps % len(pixels)
     return pixels[-steps:] + pixels[:-steps]
 
 def get_gradient(length, colors, loop = False):

@@ -63,13 +63,12 @@ def create_db_blueprint(db_filename):
         anim = db.get_animation(aid)
         if not anim:
             return jsonify({"error": "Animation not found"}), 404
-        anim["parameters"] = db.get_parameters(aid)
         return jsonify(anim)
 
     @bp_db.route("/animations/<int:aid>", methods=["PUT"])
     def api_update_animation(aid):
         data = request.json
-        updated = db.update_animation(aid, data.get("name"), data.get("description"), data.get("length"), data.get("type"))
+        updated = db.update_animation(aid, data.get("name"), data.get("description"), data.get("length"), data.get("parameters"))
         if not updated:
             return jsonify({"error": "Nothing to update"}), 400
         return jsonify(db.get_animation(aid))
@@ -99,36 +98,5 @@ def create_db_blueprint(db_filename):
     def api_delete_relation(rid):
         db.delete_relation(rid)
         return jsonify({"message": f"Relation {rid} deleted"}), 200
-
-    # -----------------------
-    # PARAMETER ROUTES
-    # -----------------------
-    @bp_db.route("/animations/<int:aid>/parameters", methods=["POST"])
-    def api_add_parameter(aid):
-        data = request.json
-        key = data.get("key")
-        value = data.get("value")
-        if not key or value is None:
-            return jsonify({"error": "Key and value are required"}), 400
-        pid = db.create_parameter(aid, key, value)
-        return jsonify({"parameter_id": pid, "key": key, "value": value})
-
-    @bp_db.route("/animations/<int:aid>/parameters", methods=["GET"])
-    def api_get_parameters(aid):
-        return jsonify(db.get_parameters(aid))
-
-    @bp_db.route("/animations/<int:aid>/parameters/<string:key>", methods=["PUT"])
-    def api_update_parameter(aid, key):
-        data = request.json
-        value = data.get("value")
-        if value is None:
-            return jsonify({"error": "Value is required"}), 400
-        db.update_parameter(aid, key, value)
-        return jsonify({key: value})
-
-    @bp_db.route("/animations/<int:aid>/parameters/<string:key>", methods=["DELETE"])
-    def api_delete_parameter(aid, key):
-        db.delete_parameter(aid, key)
-        return jsonify({"message": f"Parameter {key} deleted from animation {aid}"}), 200
 
     return bp_db

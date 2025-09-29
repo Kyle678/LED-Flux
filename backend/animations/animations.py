@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from backend.animations.utils import *
+from backend.animations.schemas import *
 
 import random, time
 
@@ -17,23 +18,60 @@ class AnimationWrapper:
         return self.animation.pixels
 
 class Animation:
-    def __init__(self, length, type_):
+    def __init__(self, length, params={}):
+
         self.length = length
-        self.type = type_
+        self.type = params.get('type', 'static')  # type of animation
+
+        # default parameters
+
+        self.label = params.get('label', BASE_PARAMETERS['label']['value'])
+        self.colors = params.get('colors', BASE_PARAMETERS['colors']['value'])
+        self.gradient = params.get('gradient', BASE_PARAMETERS['gradient']['value'])
+        self.wrap = params.get('wrap', BASE_PARAMETERS['wrap']['value'])
+        self.step = params.get('step', BASE_PARAMETERS['step']['value'])
+        self.brightness = params.get('brightness', BASE_PARAMETERS['brightness']['value'])
+
+        if self.type != 'static':
+            self.speed = params.get('speed', BASE_MOVEMENT_PARAMETERS['speed']['value'])
+            self.syncronous = params.get('syncronous', BASE_MOVEMENT_PARAMETERS['syncronous']['value'])
+            self.repeat_interval = params.get('repeat_interval', BASE_MOVEMENT_PARAMETERS['repeat_interval']['value'])
+
+        # internal state and setup
+
+        self.start_time = time.time()
         self.pixels = [(0, 0, 0)] * length
-        self.wait_time = 1/self.speed
+
+        if self.speed <= 0 or self.speed >= 5000:
+            self.wait_time = 0
+        else:
+            self.wait_time = 1/self.speed
+
         self.setup()
+        self.source_pixels = self.pixels.copy()
+
+        print("Initialized animation of type:", self.type)
 
     def get_pixels(self):
         return self.pixels
     
     def loop(self):
         while True:
-            self.update()
+            if self.syncronous:
+                now = time.time()
+                elapsed = now - self.start_time
+                normalized = (elapsed % self.repeat_interval) / self.repeat_interval
+                self.syncronous_update(normalized)
+            else:
+                self.update()
             time.sleep(self.wait_time)
 
     @abstractmethod
     def setup(self):
+        pass
+
+    @abstractmethod
+    def syncronous_update(self, normalized_time):
         pass
 
     @abstractmethod
@@ -42,23 +80,19 @@ class Animation:
 
 class StaticAnimation(Animation):
     def __init__(self, length, params):
-        self.color = params.get('color', (30, 0, 0))
-        super().__init__(length, 'static')
+        params['type'] = 'static'
+        super().__init__(length, params)
 
     def setup(self):
-        self.pixels = [self.color] * self.length
+        self.pixels = [self.colors[0]] * self.length
 
     def update(self):
         pass
 
 class RotateAnimation(Animation):
-    def __init__(self, length, type_, params):
-        self.step = params.get('step', 0)
-        self.colors = params.get('colors', [(30, 0, 0), (0, 30, 0), (0, 0, 30)])
-        self.gradient = params.get('gradient', False)
-        self.wrap = params.get('wrap', True)
-        self.speed = params.get('speed', 1000)
-        super().__init__(length, type_)
+    def __init__(self, length, params):
+        params['type'] = 'rotate'
+        super().__init__(length, params)
 
     def setup(self):
         self.pixels = generate_pixels(self.length, self.colors, self.gradient, self.loop)
@@ -66,35 +100,7 @@ class RotateAnimation(Animation):
     def update(self):
         rotate(self.pixels)
 
-class LightningAnimation(Animation):
-    def __init__(self, length=300):
-        super().__init__(length, 'lightning')
-        self.counter = 0
-        self.state = 'idle'
-        self.idle_time = 50  # frames to stay idle
-        self.flash_time = 5  # frames for flash
-        self.brightness_levels = [ (10, 10, 10), (50, 50, 50), (200, 200, 200), (255, 255, 255) ]
+    def syncronous_update(self, normalized_time):
+        shift = int(normalized_time * self.length)
+        self.pixels = rotate_copy(self.source_pixels, shift)
 
-    def setup(self):
-        self.pixels = [(0, 0, 0)] * self.length
-
-    def update(self):
-        if self.state == 'idle':
-            self.counter += 1
-            if self.counter >= self.idle_time:
-                self.state = 'flash'
-                self.counter = 0
-                self.flash_stage = 0
-        elif self.state == 'flash':
-            if self.flash_stage < len(self.brightness_levels):
-                brightness = self.brightness_levels[self.flash_stage]
-                flash_length = random.randint(5, 15)
-                start_index = random.randint(0, self.length - flash_length)
-                for i in range(flash_length):
-                    if start_index + i < self.length:
-                        self.pixels[start_index + i] = brightness
-                self.flash_stage += 1
-            else:
-                self.state = 'idle'
-                self.counter = 0
-                self.pixels = [(0, 0, 0)] * self.length
