@@ -28,14 +28,17 @@ class DatabaseManager:
         return delete_config(self.db_name, cid)
 
     # Animation methods
-    def create_animation(self, name, description, length, type):
-        return create_animation(self.db_name, name, description, length, type)
+    def create_animation(self, name, description, length, type_, parameters):
+        return create_animation(self.db_name, name, description, length, type_, parameters)
 
     def get_animation(self, aid):
         return get_animation(self.db_name, aid)
     
-    def update_animation(self, aid, name=None, description=None, length=None, type=None):
-        return update_animation(self.db_name, aid, name, description, length, type)
+    def get_all_animations(self):
+        return get_all_animations(self.db_name)
+    
+    def update_animation(self, aid, name=None, description=None, length=None, type=None, parameters=None):
+        return update_animation(self.db_name, aid, name, description, length, type, parameters)
     
     def delete_animation(self, aid):
         return delete_animation(self.db_name, aid)
@@ -52,4 +55,7 @@ class DatabaseManager:
     
     def delete_relation(self, rid):
         return delete_relation(self.db_name, rid)
+    
+    def get_relations_by_config(self, cid):
+        return get_relations_by_config(self.db_name, cid)
     

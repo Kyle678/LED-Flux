@@ -42,6 +42,7 @@ def main():
             controller.show()
         elif choice.lower() == 'off':
             controller.off()
+            break
 
     led_thread.join()
     flask_thread.join()

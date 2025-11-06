@@ -1,10 +1,10 @@
 
 
-def generate_pixels(length, colors=None, gradient=False, loop=True, step=0):
+def generate_pixels(length, colors=None, gradient=False, wrap=True, step=0):
     if gradient:
         if not colors or len(colors) < 2:
             raise ValueError("At least two colors are required for gradient")
-        pixels = get_gradient(length, colors, loop=loop)
+        pixels = get_gradient(length, colors, wrap=wrap)
         return pixels
     return [(50, 0, 0) * length]
     #fix step and everything yada yada yada...
@@ -17,10 +17,10 @@ def rotate_copy(pixels, steps=1):
     steps = steps % len(pixels)
     return pixels[-steps:] + pixels[:-steps]
 
-def get_gradient(length, colors, loop = False):
+def get_gradient(length, colors, wrap = False):
     num_colors = len(colors)
     if num_colors < 2: ValueError("Invalid number of colors")
-    if loop:
+    if wrap:
         colors.append(colors[0])
         num_colors += 1
     segment = length / (num_colors - 1)

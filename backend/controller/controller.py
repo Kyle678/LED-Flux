@@ -6,6 +6,9 @@ import threading
 import time
 
 from backend.database.db_manager import DatabaseManager
+from backend.animations.factory import AnimationFactory
+from backend.animations.animations import AnimationWrapper
+
 
 class AnimationManager:
     def __init__(self, num_pixels):
@@ -31,6 +34,11 @@ class AnimationManager:
         for animation_wrapper in self.animation_wrappers:
             self.pixels[animation_wrapper.start_index:animation_wrapper.start_index + animation_wrapper.length] = animation_wrapper.animation.get_pixels()
 
+    def reset(self):
+        self.animation_wrappers = []
+        self.animation_threads = {}
+        self.pixels = [(0, 0, 0)] * len(self.pixels)
+
 class Controller:
     def __init__ (self, config_file):
         self.db = DatabaseManager('ledflux.db')
@@ -49,6 +57,26 @@ class Controller:
     
     def __setitem__(self, index, value):
         self.pixels[index] = value
+
+    def add_animation(self, animation_data, start_index):
+        animation = AnimationFactory.create_animation(animation_data)
+
+        animation_wrapper = AnimationWrapper(animation, start_index)
+
+        self.add_animation_wrapper(animation_wrapper)
+
+    def play_animation(self, animation_data):
+        self.clear_animations()
+
+        animation = AnimationFactory.create_animation(animation_data)
+
+        animation_wrapper = AnimationWrapper(animation, 0)
+
+        self.add_animation_wrapper(animation_wrapper)
+
+    def clear_animations(self):
+        self.animation_manager.reset()
+        self.off()
 
     def add_animation_wrapper(self, animation_wrapper):
         self.animation_manager.add_animation_wrapper(animation_wrapper)

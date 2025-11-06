@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from backend.database.db_manager import DatabaseManager
+from backend.animations.schemas import get_default_parameters
 
 def create_db_blueprint(db_filename):
     bp_db = Blueprint("db_api", __name__)
@@ -45,14 +46,44 @@ def create_db_blueprint(db_filename):
     # -----------------------
     # ANIMATION ROUTES
     # -----------------------
+
     @bp_db.route("/animations", methods=["POST"])
     def api_create_animation():
         data = request.json
         name = data.get("name")
-        if not name:
-            return jsonify({"error": "Name is required"}), 400
-        aid = db.create_animation(name, data.get("description"), data.get("length"), data.get("type"))
-        return jsonify({"aid": aid, "name": name})
+        type_ = data.get("type")
+
+        if not name or not type_:
+            return jsonify({"error": "Name and type are required"}), 400
+        
+        # 1. Get the default parameters from your schema
+        final_parameters = get_default_parameters(type_)
+        if not final_parameters:
+            return jsonify({"error": f"Unknown animation type: {type_}"}), 400
+        
+        # 2. Get the user-provided parameters from the request
+        user_parameters = data.get("parameters", {})
+        
+        # 3. Merge the user's values on top of the defaults
+        #    Iterate through the user's parameters and update the 'value'
+        #    in the final_parameters dictionary.
+        if user_parameters:
+            for key, value_obj in user_parameters.items():
+                if key in final_parameters and 'value' in value_obj:
+                    final_parameters[key]['value'] = value_obj['value']
+
+        # 4. Create the animation with the final, merged parameters
+        aid = db.create_animation(
+            name, 
+            data.get("description"), 
+            data.get("length"), 
+            type_,
+            final_parameters # <-- Use the merged parameters object
+        )
+        
+        # It's good practice to return the full object that was created
+        new_animation = db.get_animation(aid)
+        return jsonify(new_animation), 201 # 201 means "Created"
 
     @bp_db.route("/animations", methods=["GET"])
     def api_get_animations():
@@ -88,7 +119,7 @@ def create_db_blueprint(db_filename):
         aid = data.get("aid")
         start = data.get("start")
         rid = db.create_relation(cid, aid, start)
-        return jsonify({"relation_id": rid, "cid": cid, "aid": aid, "start": start})
+        return jsonify({"rid": rid, "cid": cid, "aid": aid, "start": start})
 
     @bp_db.route("/relations", methods=["GET"])
     def api_get_relations():

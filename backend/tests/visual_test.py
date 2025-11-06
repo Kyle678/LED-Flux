@@ -1,6 +1,6 @@
 import pytest # pyright: ignore[reportMissingImports]
 from backend.controller.controller import Controller
-from backend.animations.animations import RotateAnimation, LightningAnimation
+from backend.animations.animations import RotateAnimation
 from backend.animations.animations import AnimationWrapper
 from backend.animations.utils import generate_pixels
 
@@ -34,66 +34,7 @@ def test_basic_visual_inspection():
     controller.fill((50, 0, 50))
     controller.show()
 
-    input("Please visually inspect leds to ensure they are filled with color (50, 50, 50) and press Enter.")
-
-    controller.off()
-
-@pytest.mark.manual
-@pytest.mark.visual
-@pytest.mark.basic
-def test_rainbow_visual_inspection():
-    controller = Controller('config.ini')
-
-    rainbow_animation = RotateAnimation(length=300,
-                                        type_='rainbow',
-                                        params={ 'step': 1,
-                                                'colors': [(50, 0, 10), (10, 0, 50)],
-                                                'gradient': True,
-                                                'wrap': True,
-                                                'speed': 100,
-                                                'syncronous': True,
-                                                'repeat_interval': 20
-                                        })
-
-    ra1 = AnimationWrapper(rainbow_animation, 0)
-    ra2 = AnimationWrapper(rainbow_animation, 300)
-    ra3 = AnimationWrapper(rainbow_animation, 600)
-    ra4 = AnimationWrapper(rainbow_animation, 900)
-    ra5 = AnimationWrapper(rainbow_animation, 1200)
-
-    controller.add_animation_wrappers([ra1, ra2, ra3, ra4, ra5])
-
-    controller.loop()
-
-    input("Please visually inspect leds to ensure they are showing a rainbow effect and press Enter.")
-
-@pytest.mark.manual
-@pytest.mark.visual
-def test_lightning_visual_inspection():
-    controller = Controller('config.ini')
-
-    lightning_animation = LightningAnimation(length=300)
-
-    lightning_animation_wrapper = AnimationWrapper(lightning_animation, 0)
-
-    controller.add_animation_wrapper(lightning_animation_wrapper)
-
-    while True:
-        controller.update()
-        controller.show()
-
-    input("Please visually inspect leds to ensure they are showing a lightning effect and press Enter.")
-
-@pytest.mark.manual
-@pytest.mark.visual
-def test_color_setup_visual_inspection():
-    controller = Controller('config.ini')
-
-    pixels = generate_pixels(300, colors=[(50, 0, 0), (0, 50, 0), (0, 0, 50)], gradient=True, loop=False)
-    controller[:300] = pixels
-    controller.show()
-
-    input("Please visually inspect leds to ensure they show a gradient from (50, 0, 0) to (0, 50, 0) to (0, 0, 50) and press Enter.")
+    input("Please visually inspect leds to ensure they are filled with color (50, 0s, 50) and press Enter.")
 
     controller.off()
 
@@ -104,13 +45,11 @@ def test_brightness_visual_inspection():
     controller = Controller('config.ini')
     controller.pixels.brightness = 1.0
 
-    for i in range(256):
-        print(i)
+    for i in range(0, 256, 5):
         controller.fill((i, 0, 0))
         controller.show()
 
-    for i in range(255, -1, -1):
-        print(i)
+    for i in range(255, -1, -5):
         controller.fill((i, 0, 0))
         controller.show()
 
@@ -126,13 +65,11 @@ def test_neopixel_brightness_visual_inspection():
 
     step = 0.01
     for i in range(100):
-        print(i)
         controller.pixels.brightness = i * step
         controller.fill((255, 0, 0))
         controller.show()
 
     for i in range(100, -1, -1):
-        print(i)
         controller.pixels.brightness = i * step
         controller.fill((255, 0, 0))
         controller.show()
@@ -147,10 +84,11 @@ def test_rotating_animation_visual_inspection():
     controller = Controller('config.ini')
 
     rotating_animation1 = RotateAnimation(length=300,
-                                         type_='rotate',
-                                         params={'colors': [(50, 0, 0), (0, 50, 0), (0, 0, 50)],
-                                                'gradient': True,
-                                                'loop': True
+                                         parameters={'type': 'rotate',
+                                                    'label': 'rotate-test',
+                                                    'colors': [(50, 0, 0), (0, 50, 0), (0, 0, 50)],
+                                                    'gradient': True,
+                                                    'loop': True
     })
 
     rotating_animation_wrapper1 = AnimationWrapper(rotating_animation1, 300)

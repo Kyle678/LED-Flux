@@ -77,3 +77,14 @@ def delete_relation(db_name, rid):
     conn.commit()
     conn.close()
     return True
+
+# -----------------------
+# GET RELATIONS BY CONFIG
+# -----------------------
+def get_relations_by_config(db_name, cid):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, cid, aid, start FROM Relation WHERE cid = ?", (cid,))
+    rows = cursor.fetchall()
+    conn.close()
+    return [{"id": r[0], "cid": r[1], "aid": r[2], "start": r[3]} for r in rows]

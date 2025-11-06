@@ -1,30 +1,39 @@
-from backend.animations.schemas import get_default_parameters
-from backend.animations.animations import *
+# backend/animations/animation_factory.py
 import copy
+import json
+
+from .schemas import get_default_parameters
+from .animations import StaticAnimation, RotateAnimation # Add other classes as you create them
 
 class AnimationFactory:
-    def create_animation(self, animation_record_from_db):
+    @staticmethod
+    def create_animation(animation_record_from_db):
         """
-        Creates an animation instance by mergin database data with schema defaults.
+        Creates an animation instance by merging database data with schema defaults.
         """
+        anim_type = animation_record_from_db.get('type')
+        length = animation_record_from_db.get('length')
 
-        anim_type = animation_record_from_db['type']
+        saved_parameters_raw = animation_record_from_db.get('parameters')
+        
+        saved_parameters = {}
+        if isinstance(saved_parameters_raw, str):
+            saved_parameters = json.loads(saved_parameters_raw)
+        elif isinstance(saved_parameters_raw, dict):
+            saved_parameters = saved_parameters_raw
 
-        default_params = get_default_parameters(anim_type)
+        default_parameters = get_default_parameters(anim_type)
+        if not default_parameters:
+            raise ValueError(f"Unknown animation type: {anim_type}")
 
-        saved_params = animation_record_from_db['parameters']
-
-        final_params = copy.deepcopy(default_params)
-
-        for key, value_obj in saved_params.items():
-            if key in final_params:
-                final_params[key] = value_obj['value']
-
-        length = animation_record_from_db['length']
+        final_parameters = copy.deepcopy(default_parameters)
+        for key, value_obj in saved_parameters.items():
+            if key in final_parameters:
+                final_parameters[key]['value'] = value_obj.get('value')
 
         if anim_type == 'static':
-            return StaticAnimation(length, final_params)
+            return StaticAnimation(length, final_parameters)
         elif anim_type == 'rotate':
-            return RotateAnimation(length, final_params)
+            return RotateAnimation(length, final_parameters)
         else:
-            raise ValueError(f"Unknown animation type: {anim_type}")
+            raise ValueError(f"No class found for animation type: {anim_type}")

@@ -18,39 +18,39 @@ class AnimationWrapper:
         return self.animation.pixels
 
 class Animation:
-    def __init__(self, length, params={}):
-
+    def __init__(self, length, parameters={}):
         self.length = length
-        self.type = params.get('type', 'static')  # type of animation
+        self.parameters = parameters
 
         # default parameters
+        self.label = self.parameters['label']
+        self.colors = self.parameters['colors']
+        self.gradient = self.parameters['gradient']
+        self.wrap = self.parameters['wrap']
+        self.step = self.parameters['step']
+        self.brightness = self.parameters['brightness']
 
-        self.label = params.get('label', BASE_PARAMETERS['label']['value'])
-        self.colors = params.get('colors', BASE_PARAMETERS['colors']['value'])
-        self.gradient = params.get('gradient', BASE_PARAMETERS['gradient']['value'])
-        self.wrap = params.get('wrap', BASE_PARAMETERS['wrap']['value'])
-        self.step = params.get('step', BASE_PARAMETERS['step']['value'])
-        self.brightness = params.get('brightness', BASE_PARAMETERS['brightness']['value'])
+        if self.brightness < 0:
+            self.brightness = 0
+        elif self.brightness > 1:
+            self.brightness = 1
 
-        if self.type != 'static':
-            self.speed = params.get('speed', BASE_MOVEMENT_PARAMETERS['speed']['value'])
-            self.syncronous = params.get('syncronous', BASE_MOVEMENT_PARAMETERS['syncronous']['value'])
-            self.repeat_interval = params.get('repeat_interval', BASE_MOVEMENT_PARAMETERS['repeat_interval']['value'])
+        self.colors = [(int(r*self.brightness), int(g*self.brightness), int(b*self.brightness)) for (r,g,b) in self.colors]
 
-        # internal state and setup
-
-        self.start_time = time.time()
-        self.pixels = [(0, 0, 0)] * length
-
+        # movement parameters
+        self.syncronous = self.parameters.get('syncronous', {}).get('value', False)
+        self.repeat_interval = self.parameters.get('repeat_interval', {}).get('value', 10)
+        self.speed = self.parameters.get('speed', {}).get('value', 100)
         if self.speed <= 0 or self.speed >= 5000:
             self.wait_time = 0
         else:
             self.wait_time = 1/self.speed
 
+        # internal state and setup
         self.setup()
         self.source_pixels = self.pixels.copy()
 
-        print("Initialized animation of type:", self.type)
+        self.start_time = time.time()
 
     def get_pixels(self):
         return self.pixels
@@ -78,10 +78,25 @@ class Animation:
     def update(self):
         pass
 
+class DynamicAnimation(Animation):
+    def __init__(self, length, parameters):
+        super().__init__(length, parameters)
+
+    def setup(self):
+        self.pixels = generate_pixels(self.length, self.colors, self.gradient, self.loop)
+
+    def update(self):
+        shift = self.step % self.length
+        self.pixels = rotate_copy(self.pixels, shift)
+
+    def syncronous_update(self, normalized_time):
+        shift = int(normalized_time * self.length)
+        self.pixels = rotate_copy(self.source_pixels, shift)
+
 class StaticAnimation(Animation):
-    def __init__(self, length, params):
-        params['type'] = 'static'
-        super().__init__(length, params)
+    def __init__(self, length, parameters):
+        parameters['type'] = 'static'
+        super().__init__(length, parameters)
 
     def setup(self):
         self.pixels = [self.colors[0]] * self.length
@@ -89,18 +104,19 @@ class StaticAnimation(Animation):
     def update(self):
         pass
 
-class RotateAnimation(Animation):
-    def __init__(self, length, params):
-        params['type'] = 'rotate'
-        super().__init__(length, params)
-
-    def setup(self):
-        self.pixels = generate_pixels(self.length, self.colors, self.gradient, self.loop)
+class RotateAnimation(DynamicAnimation):
+    def __init__(self, length, parameters):
+        parameters['type'] = 'rotate'
+        super().__init__(length, parameters)
+        self.last_shift = 0
 
     def update(self):
         rotate(self.pixels)
 
     def syncronous_update(self, normalized_time):
-        shift = int(normalized_time * self.length)
-        self.pixels = rotate_copy(self.source_pixels, shift)
-
+        shift = int(normalized_time * self.length) % self.length
+        if shift == self.last_shift:
+            return
+        self.last_shift = shift
+        next_frame = rotate_copy(self.source_pixels, shift)
+        self.pixels[:] = next_frame

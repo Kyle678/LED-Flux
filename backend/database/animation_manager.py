@@ -1,5 +1,6 @@
 # animation_manager.py
 import sqlite3
+import json
 
 # -----------------------
 # ANIMATION CRUD
@@ -8,12 +9,14 @@ import sqlite3
 # -----------------------
 # CREATE
 # -----------------------
-def create_animation(db_name, name, description=None, length=None, type_=None):
+def create_animation(db_name, name, description=None, length=None, type_=None, parameters=None):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
+
+    parameters_json = json.dumps(parameters) if parameters else None
     cursor.execute(
         "INSERT INTO Animation (name, description, length, type, parameters) VALUES (?, ?, ?, ?, ?)",
-        (name, description, length, type_)
+        (name, description, length, type_, parameters_json)
     )
     conn.commit()
     aid = cursor.lastrowid
@@ -26,7 +29,7 @@ def create_animation(db_name, name, description=None, length=None, type_=None):
 def get_animation(db_name, aid):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("SELECT aid, name, description, length, parameters FROM Animation WHERE aid = ?", (aid,))
+    cursor.execute("SELECT aid, name, description, length, type, parameters FROM Animation WHERE aid = ?", (aid,))
     row = cursor.fetchone()
     conn.close()
     if row:
@@ -35,6 +38,7 @@ def get_animation(db_name, aid):
             "name": row[1], 
             "description": row[2], 
             "length": row[3],
+            "type": row[4],
             "parameters": row[5]
         }
     return None
@@ -42,15 +46,15 @@ def get_animation(db_name, aid):
 def get_all_animations(db_name):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("SELECT aid, name, description, length, parameters FROM Animation")
+    cursor.execute("SELECT aid, name, description, length, type, parameters FROM Animation")
     rows = cursor.fetchall()
     conn.close()
-    return [{"aid": r[0], "name": r[1], "description": r[2], "length": r[3], "type": r[4]} for r in rows]
+    return [{"aid": r[0], "name": r[1], "description": r[2], "length": r[3], "type": r[4], "parameters": r[5]} for r in rows]
 
 # -----------------------
 # UPDATE
 # -----------------------
-def update_animation(db_name, aid, name=None, description=None, length=None, parameters=None):
+def update_animation(db_name, aid, name=None, description=None, length=None, type_=None, parameters=None):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     fields = []
@@ -64,6 +68,9 @@ def update_animation(db_name, aid, name=None, description=None, length=None, par
     if length is not None:
         fields.append("length = ?")
         values.append(length)
+    if type_ is not None:
+        fields.append("type = ?")
+        values.append(type_)
     if parameters is not None:
         fields.append("parameters = ?")
         values.append(parameters)

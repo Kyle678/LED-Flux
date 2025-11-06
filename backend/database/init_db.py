@@ -21,7 +21,8 @@ def init_db(db_name="leds.db"):
         name TEXT NOT NULL,
         description TEXT,
         length INTEGER,
-        params TEXT
+        type TEXT NOT NULL,
+        parameters TEXT
     );
     """)
 
