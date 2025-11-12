@@ -49,6 +49,7 @@ class Controller:
         self.flask_host = self.config.get('flask', 'host', fallback='0.0.0.0')
         self.flask_port = self.config.getint('flask', 'port', fallback=5000)
         self.pixels = neopixel.NeoPixel(self.pin, self.num_pixels, brightness=self.brightness, auto_write=False)
+        self.status = "idle"
 
         self.animation_manager = AnimationManager(self.num_pixels)
 

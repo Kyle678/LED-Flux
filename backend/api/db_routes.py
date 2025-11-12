@@ -78,12 +78,11 @@ def create_db_blueprint(db_filename):
             data.get("description"), 
             data.get("length"), 
             type_,
-            final_parameters # <-- Use the merged parameters object
+            final_parameters
         )
         
-        # It's good practice to return the full object that was created
         new_animation = db.get_animation(aid)
-        return jsonify(new_animation), 201 # 201 means "Created"
+        return jsonify(new_animation), 201
 
     @bp_db.route("/animations", methods=["GET"])
     def api_get_animations():

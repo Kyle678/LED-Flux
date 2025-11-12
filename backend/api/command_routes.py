@@ -71,7 +71,7 @@ def create_cmd_blueprint(db_filename, controller=None):
     @bp_cmd.route("/status", methods=["GET"])
     def api_get_status():
         # Here you would normally retrieve the status from the controller or system
-        status = {"status": controller.num_pixels, "uptime": "12345 seconds"}
+        status = {"status": controller.status, "brightness": controller.brightness}
         return jsonify(status), 200
 
     return bp_cmd
