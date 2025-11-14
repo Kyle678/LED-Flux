@@ -80,15 +80,14 @@ def test_neopixel_brightness_visual_inspection():
 
 @pytest.mark.manual
 @pytest.mark.visual
+@pytest.mark.current
 def test_rotating_animation_visual_inspection():
     controller = Controller('config.ini')
 
     rotating_animation1 = RotateAnimation(length=300,
                                          parameters={'type': 'rotate',
                                                     'label': 'rotate-test',
-                                                    'colors': [(50, 0, 0), (0, 50, 0), (0, 0, 50)],
-                                                    'gradient': True,
-                                                    'loop': True
+                                                    'colors': [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
     })
 
     rotating_animation_wrapper1 = AnimationWrapper(rotating_animation1, 300)
