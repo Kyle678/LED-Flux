@@ -87,7 +87,8 @@ def test_rotating_animation_visual_inspection():
     rotating_animation1 = RotateAnimation(length=300,
                                          parameters={'type': 'rotate',
                                                     'label': 'rotate-test',
-                                                    'colors': [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+                                                    'colors': [(255, 0, 0), (0, 255, 0), (0, 0, 255)],
+                                                    'brightness': 0.2
     })
 
     rotating_animation_wrapper1 = AnimationWrapper(rotating_animation1, 300)
