@@ -23,12 +23,12 @@ class Animation:
         self.parameters = parameters
 
         # default parameters
-        self.label = self.parameters['label']
-        self.colors = self.parameters['colors']
-        self.gradient = self.parameters['gradient']
-        self.wrap = self.parameters['wrap']
-        self.step = self.parameters['step']
-        self.brightness = self.parameters['brightness']
+        self.label = self.parameters['label']['value']
+        self.colors = self.parameters['colors']['value']
+        self.gradient = self.parameters['gradient']['value']
+        self.wrap = self.parameters['wrap']['value']
+        self.step = self.parameters['step']['value']
+        self.brightness = self.parameters['brightness']['value']
 
         if self.brightness < 0:
             self.brightness = 0
