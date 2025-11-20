@@ -1,35 +1,30 @@
 const baseUrl = 'http://192.168.1.101:5000';
 
 const partial_urls = {
-    connectionTest: 'connectionTest',
-    powerStatus: 'getPowerStatus',
-    getAnimationTypes: 'getAnimationTypes',
-    getAnimations: 'getAnimations',
-    getDisplayTypes: 'getDisplayTypes',
-    setConfig: 'setConfig',
-    turnOff: 'turnOff',
-    setColor: 'setColor',
-    setBrightness: 'setBrightness',
-    setPlay: 'setPlay',
-    getPlayStatus: 'getPlayStatus',
 
-    createConfig: 'createConfig',
-    deleteConfig: 'deleteConfig',
-    editConfig: 'editConfig',
-    getConfigs: 'getConfigs',
-    getConfig: 'getConfig',
+    createConfig: 'configs',
+    deleteConfig: 'configs',
+    editConfig: 'configs',
+    getConfigs: 'configs',
+    getConfig: 'configs',
 
-    createSection: 'createSection',
-    deleteSection: 'deleteSection',
-    editSection: 'editSection',
-    getSections: 'getSections',
-    getSection: 'getSection',
+    createAnimation: 'animations',
+    deleteAnimation: 'animations',
+    editAnimation: 'animations',
+    getAnimations: 'animations',
+    getAnimation: 'animations',
 
-    createLink: 'createLink',
-    deleteLink: 'deleteLink',
-    editLink: 'editLink',
-    getLinks: 'getLinks',
-    getLink: 'getLink'
+    createSection: 'sections',
+    deleteSection: 'sections',
+    editSection: 'sections',
+    getSections: 'sections',
+    getSection: 'sections',
+
+    createRelation: 'relations',
+    deleteRelation: 'relations',
+    editRelation: 'relations',
+    getRelations: 'relations',
+    getRelation: 'relations'
 };
 
 const urls = {}

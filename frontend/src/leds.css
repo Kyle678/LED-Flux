@@ -1,0 +1,17 @@
+.config-data-box {
+    padding-left: 30px;
+}
+
+.config-entry-box {
+    max-width: 300px;
+    background-color: aqua;
+}
+
+.config-box {
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.boxes {
+    display: flex;
+}

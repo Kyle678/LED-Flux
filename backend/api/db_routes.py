@@ -42,6 +42,7 @@ def create_db_blueprint(db_filename):
     def api_delete_config(cid):
         db.delete_config(cid)
         return jsonify({"message": f"Config {cid} deleted"}), 200
+    
 
     # -----------------------
     # ANIMATION ROUTES
@@ -123,6 +124,13 @@ def create_db_blueprint(db_filename):
     @bp_db.route("/relations", methods=["GET"])
     def api_get_relations():
         return jsonify(db.get_all_relations())
+
+    @bp_db.route("/relations/<int:cid>", methods=["GET"])
+    def api_get_relation(cid):
+        relations = db.get_relations_by_config(cid)
+        if relations is None:
+            return jsonify({"error": "Relations not found"}), 404
+        return jsonify(relations)
 
     @bp_db.route("/relations/<int:rid>", methods=["DELETE"])
     def api_delete_relation(rid):

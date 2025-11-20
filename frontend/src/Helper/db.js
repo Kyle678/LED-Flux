@@ -32,6 +32,36 @@ const dbOp = {
         return await getResponse(url, 'GET');
     },
 
+//------------------------------------------------------------
+// Animations
+
+    createAnimation: async (name, type, settings) => {
+        const url = urls.createAnimation;
+        const animation_data = { name, type, settings };
+        return await getResponse(url, 'POST', animation_data);
+    },
+
+    deleteAnimation: async (aid) => {
+        const url = urls.deleteAnimation + '/' + aid;
+        return await getResponse(url, 'DELETE');
+    },
+
+    editAnimation: async (aid, name, type, settings) => {
+        const url = urls.editAnimation + '/' + aid;
+        const animation_data = { name, type, settings };
+        return await getResponse(url, 'PUT', animation_data);
+    },
+
+    getAnimations: async () => {
+        const url = urls.getAnimations;
+        return await getResponse(url, 'GET');
+    },
+
+    getAnimation: async (aid) => {
+        const url = urls.getAnimation + '/' + aid;
+        return await getResponse(url, 'GET');
+    },
+
 //----------------------------------------------------------
 // Sections
 
@@ -63,31 +93,31 @@ const dbOp = {
     },
 
 //------------------------------------------------------------
-// Links
+// Relations
 
-    createLink: async (cid, sid, type, settings) => {
-        const url = urls.createLink;
-        const link_data = { cid, sid, type, settings };
-        return await getResponse(url, 'POST', link_data);
+    createRelation: async (cid, sid, type, settings) => {
+        const url = urls.createRelation;
+        const Relation_data = { cid, sid, type, settings };
+        return await getResponse(url, 'POST', Relation_data);
     },
 
-    deleteLink: async (cid, sid) => {
-        const url = urls.deleteLink + '/' + cid + '/' + sid;
+    deleteRelation: async (cid, sid) => {
+        const url = urls.deleteRelation + '/' + cid + '/' + sid;
         return await getResponse(url, 'DELETE');
     },
 
-    editLink: async (cid, sid, form_data) => {
-        const url = urls.editLink + '/' + cid + '/' + sid;
+    editRelation: async (cid, sid, form_data) => {
+        const url = urls.editRelation + '/' + cid + '/' + sid;
         return await getResponse(url, 'PUT', form_data);
     },
 
-    getLinks: async (cid) => {
-        const url = urls.getLinks + '/' + cid;
+    getRelations: async (cid) => {
+        const url = urls.getRelations + '/' + cid;
         return await getResponse(url, 'GET');
     },
 
-    getLink: async (cid, sid) => {
-        const url = urls.getLink + '/' + cid + '/' + sid;
+    getRelation: async (cid, sid) => {
+        const url = urls.getRelation + '/' + cid + '/' + sid;
         return await getResponse(url, 'GET');
     }
 };
