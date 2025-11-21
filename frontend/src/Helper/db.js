@@ -111,6 +111,11 @@ const dbOp = {
         return await getResponse(url, 'PUT', form_data);
     },
 
+    getAllRelations: async () => {
+        const url = urls.getRelations;
+        return await getResponse(url, 'GET');
+    },
+
     getRelations: async (cid) => {
         const url = urls.getRelations + '/' + cid;
         return await getResponse(url, 'GET');

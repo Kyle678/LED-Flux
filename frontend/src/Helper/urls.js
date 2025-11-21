@@ -2,6 +2,8 @@ const baseUrl = 'http://192.168.1.101:5000';
 
 const partial_urls = {
 
+    playConfig: 'playConfig',
+
     createConfig: 'configs',
     deleteConfig: 'configs',
     editConfig: 'configs',
@@ -13,12 +15,6 @@ const partial_urls = {
     editAnimation: 'animations',
     getAnimations: 'animations',
     getAnimation: 'animations',
-
-    createSection: 'sections',
-    deleteSection: 'sections',
-    editSection: 'sections',
-    getSections: 'sections',
-    getSection: 'sections',
 
     createRelation: 'relations',
     deleteRelation: 'relations',

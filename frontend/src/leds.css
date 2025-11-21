@@ -15,3 +15,17 @@
 .boxes {
     display: flex;
 }
+
+.config-relation-box {
+    width: 100%;
+}
+
+.selected {
+    border: 5px solid red;
+}
+
+.relation-entry-box {
+    background-color: lightgreen;
+    max-width: 300px;
+    margin-bottom: 10px;
+}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Config from "./config";
 import Animation from "./animation";
 import dbOp from "./Helper/db";
-import urls from "./Helper/urls";
 import "./leds.css";
 
 function App() {
@@ -13,6 +12,8 @@ function App() {
 
   const [configName, setConfigName] = useState("");
   const [configDescription, setConfigDescription] = useState("");
+
+  const [selectedConfig, setSelectedConfig] = useState(null);
 
   useEffect(() => {
     const fetchConfigs = async () => {
@@ -35,24 +36,38 @@ function App() {
   useEffect(() => {
     const fetchRelations = async () => {
       const relations = await dbOp.getRelations(1);
-      console.log(relations);
+      console.log("Relations:", relations);
       setRelations(relations);
     }
     fetchRelations();
   }, [])
 
+  const selectConfig = (config) => {
+    setSelectedConfig(config);
+    console.log(config);
+  }
+
   return (
     <div className="boxes">
       <div className="config-box">
         {configs.map((config, index) => (
-          <Config key={index} config={config} />
+          <Config key={'config'+index} isSelected={selectedConfig===config} config={config} setConfig={selectConfig} />
         ))}
         <input type="text" placeholder="Config Name" value={configName} onChange={(e) => setConfigName(e.target.value)}/>
         <input type="text" placeholder="Description" value={configDescription} onChange={(e) => setConfigDescription(e.target.value)}/>
         <input type="button" value="Add Config" onClick={async () => {
-          const new_config = await dbOp.createConfig("New Config", "Description");
+          const new_config = await dbOp.createConfig(configName, configDescription);
           setConfigs((prev) => [...prev, new_config]);
         }} />
+      </div>
+      <div className='config-relation-box'>
+        {selectedConfig && relations && relations.filter((relation) => relation.cid === selectedConfig.cid).map((relation, index) => (
+          <div key={'relation'+index} className='relation-entry-box'>
+            <h2> Relation {relation.id} </h2>
+            <p> Animation ID: {relation.aid} </p>
+            <p> Start Index: {relation.start} </p>
+          </div>
+        ))}
       </div>
       <div className="animations-box">
         {animations.map((animation, index) => (

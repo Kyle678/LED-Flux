@@ -110,7 +110,7 @@ def create_db_blueprint(db_filename):
         return jsonify({"message": f"Animation {aid} deleted"}), 200
 
     # -----------------------
-    # RELATION ROUTES (optional)
+    # RELATION ROUTES
     # -----------------------
     @bp_db.route("/relations", methods=["POST"])
     def api_create_relation():
@@ -124,6 +124,10 @@ def create_db_blueprint(db_filename):
     @bp_db.route("/relations", methods=["GET"])
     def api_get_relations():
         return jsonify(db.get_all_relations())
+    
+    @bp_db.route("/relations/<int:rid>", methods=["GET"])
+    def api_get_relation(rid):
+        relation = db.get_relation_by_id
 
     @bp_db.route("/relations/<int:cid>", methods=["GET"])
     def api_get_relation(cid):
@@ -136,5 +140,13 @@ def create_db_blueprint(db_filename):
     def api_delete_relation(rid):
         db.delete_relation(rid)
         return jsonify({"message": f"Relation {rid} deleted"}), 200
+    
+    @bp_db.route("/relations/<int:rid>", methods=["PUT"])
+    def api_update_relation(rid):
+        data = request.json
+        updated = db.update_relation(rid, data.get("cid"), data.get("aid"), data.get("start"))
+        if not updated:
+            return jsonify({"error": "Nothing to update"}), 400
+        return jsonify(db.get_relation(rid))
 
     return bp_db
