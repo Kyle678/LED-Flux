@@ -29,7 +29,7 @@ def init_db(db_name="leds.db"):
     # Relation table (links Config <-> Animation)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Relation (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        rid INTEGER PRIMARY KEY AUTOINCREMENT,
         cid INTEGER NOT NULL,
         aid INTEGER NOT NULL,
         start INTEGER,

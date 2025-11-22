@@ -14,7 +14,7 @@ def create_cmd_blueprint(db_filename, controller=None):
         config = db.get_config(cid)
         if not config:
             return jsonify({"error": "Config not found"}), 404
-        relations = db.get_relations_by_config(cid)
+        relations = db.get_relations(cid)
         if not relations:
             return jsonify({"error": "No animations found for this config"}), 404
         controller.clear_animations()

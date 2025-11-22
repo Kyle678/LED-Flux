@@ -42,6 +42,20 @@ function App() {
     fetchRelations();
   }, [])
 
+  useEffect(() => {
+    const fetchAnimation = async () => {
+      for(let relation of relations) {
+        const animation = await dbOp.getAnimation(relation.aid);
+        relation.animation = animation;
+      }
+      setRelations([...relations]);
+    }
+    console.log("fetching animations for relations");
+    if(relations.length > 0) {
+      fetchAnimation();
+    }
+  }, [relations.length])
+
   const selectConfig = (config) => {
     setSelectedConfig(config);
     console.log(config);
@@ -66,6 +80,7 @@ function App() {
             <h2> Relation {relation.id} </h2>
             <p> Animation ID: {relation.aid} </p>
             <p> Start Index: {relation.start} </p>
+            <p> Animation: {JSON.stringify(relation.animation)} </p>
           </div>
         ))}
       </div>

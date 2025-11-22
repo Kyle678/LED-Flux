@@ -56,6 +56,6 @@ class DatabaseManager:
     def delete_relation(self, rid):
         return delete_relation(self.db_name, rid)
     
-    def get_relations_by_config(self, cid):
+    def get_relations(self, cid):
         return get_relations_by_config(self.db_name, cid)
     

@@ -122,16 +122,19 @@ def create_db_blueprint(db_filename):
         return jsonify({"rid": rid, "cid": cid, "aid": aid, "start": start})
 
     @bp_db.route("/relations", methods=["GET"])
-    def api_get_relations():
+    def api_get_all_relations():
         return jsonify(db.get_all_relations())
     
-    @bp_db.route("/relations/<int:rid>", methods=["GET"])
+    @bp_db.route("/relation/<int:rid>", methods=["GET"])
     def api_get_relation(rid):
-        relation = db.get_relation_by_id
+        relation = db.get_relation(rid)
+        if relation is None:
+            return jsonify({"error": "Relation not found"}), 404
+        return jsonify(relation)
 
     @bp_db.route("/relations/<int:cid>", methods=["GET"])
-    def api_get_relation(cid):
-        relations = db.get_relations_by_config(cid)
+    def api_get_relations(cid):
+        relations = db.get_relations(cid)
         if relations is None:
             return jsonify({"error": "Relations not found"}), 404
         return jsonify(relations)
