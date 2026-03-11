@@ -14,6 +14,10 @@ lerna-debug.log*
 
 *.db
 
+*.env
+
+*.log
+
 .vscode/
 
 # Ignore Python cache
@@ -23,3 +27,5 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+*.code-workspace
