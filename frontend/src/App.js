@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const API_BASE = 'http://192.168.1.101:5000/api';
 
 export default function App() {
-  const [brightness, setBrightness] = useState(128);
+  const [brightness, setBrightness] = useState(100);
   const [isOn, setIsOn] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   
@@ -18,7 +18,7 @@ export default function App() {
         const data = await response.json();
         
         if (data.status === 'success' && data.state) {
-          setBrightness(data.state.brightness || 128);
+          setBrightness(data.state.brightness || 100);
           setIsOn(data.state.is_on || false);
           // Guessing play state based on whether an animation is active
           setIsPlaying(data.state.current_animation !== 'none'); 
@@ -48,7 +48,7 @@ export default function App() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           // Sending the nested dictionary structure your engine expects
-          body: JSON.stringify({ action: "brightness", data: { value: newLevel } })
+          body: JSON.stringify({ action: "brightness", data: { value: newLevel/100 } })
         });
       } catch (error) {
         console.error("Error setting brightness:", error);
@@ -108,7 +108,8 @@ export default function App() {
         <input 
           type="range" 
           min="0" 
-          max="255" 
+          max="100" 
+          step="1"
           value={brightness} 
           onChange={handleBrightnessChange} 
           style={styles.slider}
