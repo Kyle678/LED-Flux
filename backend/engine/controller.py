@@ -19,6 +19,8 @@ class Controller:
 
         self.clear()
 
+        self.configs = []
+
         self.animations = []
 
     def is_active(self):
@@ -59,12 +61,23 @@ class Controller:
     def update(self):
         if not self.active or not self.power:
             return
-        for animation in self.animations:
-            if animation.ready_to_update():
-                pixels = animation.render_frame()
-                for i in range(min(self.num_pixels, len(pixels))):
-                    self[i + animation.get_start_index()] = pixels[i]
+        if self.configs:
+            for config in self.configs:
+                for animation in config.get_animations():
+                    self.update_animation(animation)
+        else:
+            for animation in self.animations:
+                self.update_animation(animation)
         self.show()
+
+    def update_animation(self, animation):
+        if animation.ready_to_update():
+            pixels = animation.render_frame()
+            for i in range(min(self.num_pixels, len(pixels))):
+                self[i + animation.get_start_index()] = pixels[i]
 
     def add_animation(self, animation):
         self.animations.append(animation)
+
+    def add_config(self, config):
+        self.configs.append(config)

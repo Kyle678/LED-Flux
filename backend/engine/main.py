@@ -25,6 +25,10 @@ def set_up_socket_server():
     sock.setblocking(0) # Make socket non-blocking
     return sock
 
+def respond_to_socket(sock, addr, message):
+    response_message = json.dumps(message).encode('utf-8')
+    sock.sendto(response_message, addr)
+
 def check_for_api_commands(sock):
     ready = select.select([sock], [], [], 0.01) # Wait max 10ms
     if ready[0]:
@@ -45,8 +49,7 @@ def loop(sock, controller):
 
             if action == "get_status":
                 current_state = handler(controller)
-                response_message = json.dumps(current_state).encode('utf-8')
-                sock.sendto(response_message, addr)                
+                respond_to_socket(sock, addr, current_state)
             else:
                 data = command.get("data", {})
                 

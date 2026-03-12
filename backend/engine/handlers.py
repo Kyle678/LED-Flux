@@ -18,6 +18,10 @@ def handle_animation(controller, data):
     animation = anim_class(**data)
     controller.add_animation(animation)
 
+def handle_config(controller, data):
+    # Placeholder for future configuration handling
+    pass
+
 def handle_get_status(controller):
     current_state = {
         "active": controller.is_active(),
@@ -41,6 +45,7 @@ COMMAND_HANDLERS = {
     "brightness": handle_brightness,
     "clear": handle_clear,
     "animation": handle_animation,
+    "config": handle_config,
     "power": handle_power,
     "get_status": handle_get_status
 }
