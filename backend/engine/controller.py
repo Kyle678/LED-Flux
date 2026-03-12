@@ -57,6 +57,8 @@ class Controller:
         self.show()
 
     def update(self):
+        if not self.active or not self.power:
+            return
         for animation in self.animations:
             if animation.ready_to_update():
                 pixels = animation.render_frame()

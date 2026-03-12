@@ -29,9 +29,18 @@ def handle_get_status(controller):
     }
     return current_state
 
+def handle_power(controller, data):
+    state = data.get('state', 'off')
+    if state == 'on':
+        controller.set_power(True)
+    else:
+        controller.set_power(False)
+        controller.clear()
+
 COMMAND_HANDLERS = {
     "brightness": handle_brightness,
     "clear": handle_clear,
     "animation": handle_animation,
+    "power": handle_power,
     "get_status": handle_get_status
 }

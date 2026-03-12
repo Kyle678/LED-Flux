@@ -26,3 +26,9 @@ def clear():
     data = {"action": "clear"}
     engine_sender.send_to_engine(data)
     return jsonify({"status": "success", "message": "Cleared pixels"}), 200
+
+@main_routes.route('/api/power', methods=['POST'])
+def power():
+    data = request.json
+    engine_sender.send_to_engine(data)
+    return jsonify({"status": "success", "received": data}), 200
