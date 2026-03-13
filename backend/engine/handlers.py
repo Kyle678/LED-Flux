@@ -15,6 +15,7 @@ def handle_animation(controller, data):
         print(f"Unknown animation requested: {anim_name}")
         return
     
+    controller.animations = []
     animation = anim_class(**data)
     controller.add_animation(animation)
 
