@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 
 from udp_comms import engine_sender
 
@@ -11,24 +11,20 @@ def status():
 
 @main_routes.route('/api/brightness', methods=['POST'])
 def brightness():
-    data = request.json
-    engine_sender.send_to_engine(data)
-    return jsonify({"status": "success", "received": data}), 200
+    return engine_sender.default_send_to_engine(request)
 
 @main_routes.route('/api/animation', methods=['POST'])
 def animation():
-    data = request.json
-    engine_sender.send_to_engine(data)
-    return jsonify({"status": "success", "received": data}), 200
+    return engine_sender.default_send_to_engine(request)
 
 @main_routes.route('/api/clear', methods=['POST'])
 def clear():
-    data = {"action": "clear"}
-    engine_sender.send_to_engine(data)
-    return jsonify({"status": "success", "message": "Cleared pixels"}), 200
+    return engine_sender.default_send_to_engine(request)
 
 @main_routes.route('/api/power', methods=['POST'])
 def power():
-    data = request.json
-    engine_sender.send_to_engine(data)
-    return jsonify({"status": "success", "received": data}), 200
+    return engine_sender.default_send_to_engine(request)
+
+@main_routes.route('/api/pause', methods=['POST'])
+def pause():
+    return engine_sender.default_send_to_engine(request)

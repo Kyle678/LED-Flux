@@ -60,8 +60,8 @@ class StaticAnimation(BaseAnimation):
 #class RotatingAnimation(Animation):
 
 class RainbowAnimation(BaseAnimation):
-    def __init__(self, name='rainbow', num_pixels=100, start_index=0, loop_duration=5):
-        super().__init__(name, num_pixels, start_index, loop_duration)
+    def __init__(self, name='rainbow', num_pixels=100, start_index=0, loop_duration=5, target_fps=30):
+        super().__init__(name, num_pixels, start_index, loop_duration, target_fps)
         self.setup()
 
     def setup(self):

@@ -16,6 +16,11 @@ class EngineUDPSender:
         # Create the socket connection once
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    def default_send_to_engine(self, request):
+        data = request.json
+        self.send_to_engine(data)
+        return jsonify({"status": "success", "received": data}), 200
+
     def send_to_engine(self, data):
         """Encodes and sends data to the configured UDP engine."""
         try:

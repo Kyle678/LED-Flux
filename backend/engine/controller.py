@@ -19,7 +19,7 @@ class Controller:
 
         self.clear()
 
-        self.configs = []
+        self.config = None
 
         self.animations = []
 
@@ -61,10 +61,9 @@ class Controller:
     def update(self):
         if not self.active or not self.power:
             return
-        if self.configs:
-            for config in self.configs:
-                for animation in config.get_animations():
-                    self.update_animation(animation)
+        if self.config:
+            pass
+            #update config here
         else:
             for animation in self.animations:
                 self.update_animation(animation)
