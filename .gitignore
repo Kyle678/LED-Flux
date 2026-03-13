@@ -20,6 +20,9 @@ lerna-debug.log*
 
 .vscode/
 
+*/start_led.sh
+*/stop_led.sh
+
 # Ignore Python cache
 __pycache__/
 */__pycache__/

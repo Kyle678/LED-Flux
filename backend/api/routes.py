@@ -9,7 +9,7 @@ main_routes = Blueprint('main', __name__)
 
 database_routes = Blueprint('database', __name__)
 
-DATABASE = 'led_configs.db'
+DATABASE = '/home/kyle/Documents/LED-Flux/backend/led_configs.db'
 
 def get_db():
     db = getattr(g, '_database', None)

@@ -5,7 +5,7 @@ import sqlite3
 
 from routes import main_routes, database_routes
 
-DATABASE = 'led_configs.db'
+DATABASE = '/home/kyle/Documents/LED-Flux/backend/led_configs.db'
 
 config = configparser.ConfigParser()
 config.read('config.ini')
