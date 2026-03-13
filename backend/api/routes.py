@@ -28,3 +28,7 @@ def power():
 @main_routes.route('/api/pause', methods=['POST'])
 def pause():
     return engine_sender.default_send_to_engine(request)
+
+@main_routes.route('/api/config', methods=['POST'])
+def config():
+    return engine_sender.default_send_to_engine(request)

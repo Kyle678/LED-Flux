@@ -20,8 +20,20 @@ def handle_animation(controller, data):
     controller.add_animation(animation)
 
 def handle_config(controller, data):
-    # Placeholder for future configuration handling
-    pass
+    controller.clear()
+    
+    controller.config = data
+
+    for animation in data.get('animations', []):
+        anim_name = animation.get('name')
+        anim_class = ANIMATION_CLASSES.get(anim_name)
+        
+        if not anim_class:
+            print(f"Unknown animation in config: {anim_name}")
+            continue
+        
+        anim_instance = anim_class(**animation)
+        controller.add_animation(anim_instance)
 
 def handle_get_status(controller):
     current_state = {
@@ -57,5 +69,6 @@ COMMAND_HANDLERS = {
     "config": handle_config,
     "power": handle_power,
     "pause": handle_pause,
+    "config": handle_config,
     "get_status": handle_get_status
 }

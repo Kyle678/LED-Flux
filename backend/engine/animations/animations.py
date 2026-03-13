@@ -5,8 +5,9 @@ from abc import ABC, abstractmethod
 from engine.utils import Colors, Utils
 
 class BaseAnimation:
-    def __init__(self, name="new animation", num_pixels=10, start_index=0, loop_duration=5, target_fps=2):
+    def __init__(self, name="new animation", num_pixels=10, start_index=0, loop_duration=5, target_fps=30, colors=[[255, 0, 0], [0, 0, 255]]):
         self.name = name
+        self.colors = colors
         self.num_pixels = num_pixels
         self.start_index = start_index
         self.loop_duration = loop_duration
@@ -46,8 +47,8 @@ class BaseAnimation:
         pass
 
 class StaticAnimation(BaseAnimation):
-    def __init__(self, num_pixels, start_index, color):
-        super().__init__('static', num_pixels, start_index)
+    def __init__(self, name='static', num_pixels=100, start_index=0, color=Colors.WHITE):
+        super().__init__(name, num_pixels, start_index)
         self.color = color
         self.setup()
 
@@ -57,7 +58,19 @@ class StaticAnimation(BaseAnimation):
     def update(self):
         pass
 
-#class RotatingAnimation(Animation):
+class RotatingAnimation(BaseAnimation):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.setup()
+
+    def setup(self):
+        new_pixels = Utils.getMultiGradient(self.num_pixels, self.colors)
+        self.pixels = new_pixels
+        self.base_pixels = new_pixels.copy()
+
+    def update(self):
+        rotate_by = int((self.get_loop_time() / self.loop_duration) * self.num_pixels)
+        self.pixels = Utils.rotate_copy(self.base_pixels, rotate_by)
 
 class RainbowAnimation(BaseAnimation):
     def __init__(self, name='rainbow', num_pixels=100, start_index=0, loop_duration=5, target_fps=30):

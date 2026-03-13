@@ -49,6 +49,7 @@ class Controller:
         self.pixels.show()
 
     def clear(self):
+        self.config = None
         self.animations = []
         self.fill((0, 0, 0))
         self.show()
@@ -61,12 +62,10 @@ class Controller:
     def update(self):
         if not self.active or not self.power:
             return
-        if self.config:
-            pass
-            #update config here
-        else:
-            for animation in self.animations:
-                self.update_animation(animation)
+
+        for animation in self.animations:
+            self.update_animation(animation)
+
         self.show()
 
     def update_animation(self, animation):

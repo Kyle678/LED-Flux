@@ -1,6 +1,8 @@
-from engine.animations.animations import RainbowAnimation, WhiteAnimation
+from engine.animations.animations import *
 
 ANIMATION_CLASSES = {
     "rainbow": RainbowAnimation,
-    "white": WhiteAnimation
+    "white": WhiteAnimation,
+    "static": StaticAnimation,
+    "rotating": RotatingAnimation
 }
