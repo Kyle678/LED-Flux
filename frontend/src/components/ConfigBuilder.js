@@ -83,8 +83,6 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
           <select style={styles.input} value={builderType} onChange={(e) => setBuilderType(e.target.value)}>
             <option value="static">Static</option>
             <option value="rotating">Rotating</option>
-            <option value="rainbow">Rainbow</option>
-            <option value="white">White</option>
           </select>
         </div>
         <div style={styles.inputGroup}>
