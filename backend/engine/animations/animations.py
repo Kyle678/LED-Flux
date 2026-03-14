@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from engine.utils import Colors, Utils
 
 class BaseAnimation:
-    def __init__(self, name="new animation", num_pixels=10, start_index=0, loop_duration=5, target_fps=30, colors=[[255, 0, 0], [0, 0, 255]]):
+    def __init__(self, name="new animation", num_pixels=10, brightness=1, start_index=0, loop_duration=5, target_fps=30, colors=[[255, 0, 0], [0, 0, 255]]):
         self.name = name
         self.colors = colors
         self.num_pixels = num_pixels
@@ -14,6 +14,7 @@ class BaseAnimation:
         self.target_fps = target_fps
         self.update_interval = 1.0 / target_fps
         self.last_update = 0
+        self.brightness = brightness
         self.pixels = [Colors.BLACK for _ in range(num_pixels)]
         self.base_pixels = self.pixels.copy()
         self.start_time = time.time()
@@ -27,18 +28,29 @@ class BaseAnimation:
     
     def render_frame(self):
         self.update()
+        if self.brightness < 1:
+            dimmed_pixels = []
+            for pixel in self.pixels:
+                dimmed_pixel = tuple(int(c * self.brightness) for c in pixel)
+                dimmed_pixels.append(dimmed_pixel)
+            return dimmed_pixels
         return self.get_pixels()
 
     def get_delta_time(self):
         return time.time() - self.start_time
     
     def get_loop_time(self):
-        return self.get_delta_time() % self.loop_duration
+        return (self.get_delta_time() % self.loop_duration) / self.loop_duration
+
+    def pixel_to_time_ratio(self):
+        return self.get_loop_time()
+
+    def get_cycle_index(self):
+        return int(self.pixel_to_time_ratio() * self.num_pixels)
 
     def get_start_index(self):
         return self.start_index
 
-    @abstractmethod
     def get_pixels(self):
         return self.pixels
     
@@ -69,7 +81,7 @@ class RotatingAnimation(BaseAnimation):
         self.base_pixels = new_pixels.copy()
 
     def update(self):
-        rotate_by = int((self.get_loop_time() / self.loop_duration) * self.num_pixels)
+        rotate_by = self.get_cycle_index()
         self.pixels = Utils.rotate_copy(self.base_pixels, rotate_by)
 
 class RainbowAnimation(BaseAnimation):
@@ -84,7 +96,7 @@ class RainbowAnimation(BaseAnimation):
         self.base_pixels = new_pixels.copy()
 
     def update(self):
-        rotate_by = int((self.get_loop_time() / self.loop_duration) * self.num_pixels)
+        rotate_by = int(self.pixel_to_time_ratio() * self.num_pixels)
         self.pixels = Utils.rotate_copy(self.base_pixels, rotate_by)
 
 class WhiteAnimation(BaseAnimation):

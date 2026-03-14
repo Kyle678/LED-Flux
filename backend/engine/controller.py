@@ -39,8 +39,22 @@ class Controller:
     def __getitem__(self, index):
         return self.pixels[index]
     
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return self.pixels[key]
+        else:
+            return self.pixels[key]
+    
     def __setitem__(self, index, value):
         self.pixels[index] = value
+
+    def __setitem__(self, key, value):
+        if isinstance(key, slice):
+            start, stop, step = key.indices(self.num_pixels)
+            for i, val in zip(range(start, stop, step), value):
+                self.pixels[i] = val
+        else:
+            self.pixels[key] = value
 
     def fill(self, color):
         self.pixels.fill(color)

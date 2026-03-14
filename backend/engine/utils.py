@@ -17,11 +17,15 @@ class Colors:
         return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
 class Utils:
-
     @staticmethod
     def getGradient(length, c1, c2):
-        colors = []
+        # Prevent ZeroDivisionError and handle edge cases
+        if length <= 0:
+            return []
+        if length == 1:
+            return [tuple(c1)]
 
+        colors = []
         for i in range(length):
             f1 = i / (length - 1)
             f2 = 1 - f1
@@ -31,18 +35,30 @@ class Utils:
 
     @staticmethod
     def getMultiGradient(length, colors, wrap=False):
+        if not colors:
+            return []
+        if len(colors) == 1:
+            return [tuple(colors[0])] * length
+
         gradient_colors = []
         num_colors = len(colors)
-
         count = num_colors - 1
 
-        if wrap: count += 1
+        if wrap: 
+            count += 1
 
         for i in range(count):
             c1 = colors[i]
             c2 = colors[(i + 1) % num_colors]
-            segment_length = math.ceil(length / num_colors)
+            
+            # Use proportional fractions to calculate precise start and end indices.
+            # This perfectly absorbs remainder pixels without exceeding the total length.
+            start_idx = int((i / count) * length)
+            end_idx = int(((i + 1) / count) * length)
+            segment_length = end_idx - start_idx
+            
             gradient_colors.extend(Utils.getGradient(segment_length, c1, c2))
+            
         return gradient_colors
 
     @staticmethod

@@ -7,7 +7,24 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
   const [builderPixels, setBuilderPixels] = useState(100);
   const [builderStart, setBuilderStart] = useState(0);
   const [builderColor, setBuilderColor] = useState('#0000ff'); 
+  // New state for the rotating color list
+  const [builderColorList, setBuilderColorList] = useState(['#ff0000', '#00ff00', '#0000ff']);
   const [editingAnimIndex, setEditingAnimIndex] = useState(null);
+
+  // Helpers for managing the dynamic color list
+  const handleColorListChange = (index, newColor) => {
+    const newList = [...builderColorList];
+    newList[index] = newColor;
+    setBuilderColorList(newList);
+  };
+  
+  const addColorToList = () => {
+    setBuilderColorList([...builderColorList, '#ffffff']);
+  };
+
+  const removeColorFromList = (indexToRemove) => {
+    setBuilderColorList(builderColorList.filter((_, index) => index !== indexToRemove));
+  };
 
   const addOrUpdateAnimation = () => {
     const newAnim = {
@@ -15,7 +32,13 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
       num_pixels: parseInt(builderPixels, 10),
       start_index: parseInt(builderStart, 10)
     };
-    if (builderType === 'static') newAnim.color = hexToRgb(builderColor);
+    
+    // Attach the appropriate color data based on type
+    if (builderType === 'static') {
+      newAnim.color = hexToRgb(builderColor);
+    } else if (builderType === 'rotating') {
+      newAnim.colors = builderColorList.map(hex => hexToRgb(hex));
+    }
 
     if (editingAnimIndex !== null) {
       const updatedList = [...configList];
@@ -32,7 +55,14 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
     setBuilderType(anim.name);
     setBuilderPixels(anim.num_pixels);
     setBuilderStart(anim.start_index);
-    if (anim.color) setBuilderColor(rgbToHex(anim.color[0], anim.color[1], anim.color[2]));
+    
+    // Load existing color(s) into the builder
+    if (anim.name === 'static' && anim.color) {
+      setBuilderColor(rgbToHex(anim.color[0], anim.color[1], anim.color[2]));
+    } else if (anim.name === 'rotating' && anim.colors) {
+      setBuilderColorList(anim.colors.map(c => rgbToHex(c[0], c[1], c[2])));
+    }
+    
     setEditingAnimIndex(index);
   };
 
@@ -52,6 +82,7 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
           <label>Type</label>
           <select style={styles.input} value={builderType} onChange={(e) => setBuilderType(e.target.value)}>
             <option value="static">Static</option>
+            <option value="rotating">Rotating</option>
             <option value="rainbow">Rainbow</option>
             <option value="white">White</option>
           </select>
@@ -64,6 +95,8 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
           <label>Start Index</label>
           <input type="number" style={styles.input} value={builderStart} onChange={(e) => setBuilderStart(e.target.value)} />
         </div>
+        
+        {/* Single Color Input for Static */}
         {builderType === 'static' && (
           <div style={styles.inputGroup}>
             <label>Color</label>
@@ -72,7 +105,41 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+      {/* Multiple Color Inputs for Rotating (Spans full width) */}
+      {builderType === 'rotating' && (
+        <div style={{...styles.inputGroup, marginTop: '10px'}}>
+          <label>Colors</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+            {builderColorList.map((color, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'center', backgroundColor: '#333', padding: '2px', borderRadius: '4px' }}>
+                <input 
+                  type="color" 
+                  style={{ width: '30px', height: '30px', padding: '0', border: 'none', cursor: 'pointer', background: 'none' }} 
+                  value={color} 
+                  onChange={(e) => handleColorListChange(index, e.target.value)} 
+                />
+                {builderColorList.length > 1 && (
+                  <button 
+                    style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', padding: '0 4px', fontWeight: 'bold' }} 
+                    onClick={() => removeColorFromList(index)}
+                    title="Remove Color"
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            ))}
+            <button 
+              style={{...styles.button, backgroundColor: '#444', color: '#fff', margin: '0', padding: '4px 10px', fontSize: '12px'}} 
+              onClick={addColorToList}
+            >
+              + Add Color
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
         <button 
           style={{...styles.button, flex: 1, backgroundColor: editingAnimIndex !== null ? '#ffc107' : '#0dcaf0', color: '#000', fontWeight: 'bold', margin: 0}} 
           onClick={addOrUpdateAnimation}
@@ -92,7 +159,9 @@ export default function ConfigBuilder({ configList, setConfigList, configName, s
           {configList.map((anim, index) => (
             <div key={index} style={{...styles.listItem, backgroundColor: editingAnimIndex === index ? '#333' : 'transparent'}}>
               <span style={{ color: '#ddd' }}>
-                <strong style={{ color: '#fff' }}>{anim.name}</strong> ({anim.num_pixels}px @ idx {anim.start_index}) 
+                <strong style={{ color: '#fff' }}>{anim.name}</strong> ({anim.num_pixels}px @ idx {anim.start_index})
+                {/* Optional: Show a tiny preview indicator of the colors */}
+                {anim.name === 'rotating' && anim.colors && ` [${anim.colors.length} colors]`}
               </span>
               <div style={{ display: 'flex' }}>
                 <button onClick={() => loadAnimForEditing(index)} style={{...styles.button, backgroundColor: '#0d6efd', padding: '4px 8px', margin: '0 5px 0 0'}}>✏️</button>
