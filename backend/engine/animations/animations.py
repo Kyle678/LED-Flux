@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from engine.utils import Colors, Utils
 
-class BaseAnimation:
+class BaseAnimation(ABC):
     def __init__(self,
                  animation_type,
                  name="new animation",
@@ -15,10 +15,12 @@ class BaseAnimation:
                  target_fps=30,
                  colors=[(255, 100, 0), (0, 255, 100), (100, 0, 255)],
                  color=(255, 100, 0),
-                 hide=False
+                 hide=False,
+                 wrap=True
                  ):
 
         self.hide = hide
+        self.wrap = wrap
         self.name = name
         self.animation_type = animation_type
         self.colors = colors
@@ -32,7 +34,7 @@ class BaseAnimation:
         self.brightness = brightness
         self.pixels = [Colors.BLACK for _ in range(num_pixels)]
         self.base_pixels = self.pixels.copy()
-        self.start_time = time.time()
+        self.start_time = time.monotonic()
         self.blank = [Colors.BLACK for _ in range(num_pixels)]
 
     def ready_to_update(self):
@@ -55,7 +57,7 @@ class BaseAnimation:
         return self.get_pixels()
 
     def get_delta_time(self):
-        return time.time() - self.start_time
+        return time.monotonic() - self.start_time
     
     def get_loop_time(self):
         return (self.get_delta_time() % self.loop_duration) / self.loop_duration

@@ -5,11 +5,13 @@ from flask import Blueprint, request, jsonify, g
 
 from udp_comms import engine_sender
 
+from config import database_path
+
 main_routes = Blueprint('main', __name__)
 
 database_routes = Blueprint('database', __name__)
 
-DATABASE = '/home/kyle/Documents/LED-Flux/backend/led_configs.db'
+DATABASE = database_path
 
 def get_db():
     db = getattr(g, '_database', None)
