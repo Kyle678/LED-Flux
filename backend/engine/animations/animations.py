@@ -14,8 +14,11 @@ class BaseAnimation:
                  loop_duration=5,
                  target_fps=30,
                  colors=[(255, 100, 0), (0, 255, 100), (100, 0, 255)],
-                 color=(255, 100, 0)
+                 color=(255, 100, 0),
+                 hide=False
                  ):
+
+        self.hide = hide
         self.name = name
         self.animation_type = animation_type
         self.colors = colors
@@ -30,6 +33,7 @@ class BaseAnimation:
         self.pixels = [Colors.BLACK for _ in range(num_pixels)]
         self.base_pixels = self.pixels.copy()
         self.start_time = time.time()
+        self.blank = [Colors.BLACK for _ in range(num_pixels)]
 
     def ready_to_update(self):
         now = time.monotonic()
@@ -39,6 +43,8 @@ class BaseAnimation:
         return False
     
     def render_frame(self):
+        if self.hide:
+            return self.blank
         self.update()
         if self.brightness < 1:
             dimmed_pixels = []
@@ -82,11 +88,21 @@ class StaticAnimation(BaseAnimation):
         pass
 
 class RotatingAnimation(BaseAnimation):
-    def __init__(self, animation_type='rotating', **kwargs):
+    def __init__(self,
+                 animation_type='rotating',
+                 wrap=True,
+                 **kwargs
+                ):
+        
         super().__init__(animation_type, **kwargs)
+
+        self.wrap = wrap
+
         self.setup()
 
     def setup(self):
+        if self.wrap:
+            self.colors.append(self.colors[0])
         new_pixels = Utils.getMultiGradient(self.num_pixels, self.colors)
         self.pixels = new_pixels
         self.base_pixels = new_pixels.copy()

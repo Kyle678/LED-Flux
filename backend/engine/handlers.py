@@ -25,7 +25,7 @@ def handle_config(controller, data):
     controller.config = data
 
     for animation in data.get('animations', []):
-        anim_name = animation.get('name')
+        anim_name = animation.get('animation_type')
         anim_class = ANIMATION_CLASSES.get(anim_name)
         
         if not anim_class:

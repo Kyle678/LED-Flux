@@ -97,6 +97,26 @@ def get_configs():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# --- RETRIEVE A SINGLE CONFIG BY NAME ---
+@database_routes.route('/api/config/<config_name>', methods=['GET'])
+def get_config(config_name):
+    db = get_db()
+    try:
+        cursor = db.execute('SELECT name, animations_json FROM configs WHERE name = ?', (config_name,))
+        row = cursor.fetchone()
+        
+        if row:
+            config_data = {
+                "name": row['name'],
+                "animations": json.loads(row['animations_json']) # Convert JSON string back to a Python list
+            }
+            return jsonify({"status": "success", "data": config_data}), 200
+        else:
+            return jsonify({"status": "error", "message": f"Config '{config_name}' not found."}), 404
+            
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 # --- DELETE A CONFIG ---
 @database_routes.route('/api/configs/<config_name>', methods=['DELETE'])
 def delete_config(config_name):
