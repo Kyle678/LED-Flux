@@ -14,7 +14,6 @@ class BaseAnimation(ABC):
                  loop_duration=5,
                  target_fps=30,
                  colors=[(255, 100, 0), (0, 255, 100), (100, 0, 255)],
-                 color=(255, 100, 0),
                  hide=False,
                  wrap=True
                  ):
@@ -24,7 +23,7 @@ class BaseAnimation(ABC):
         self.name = name
         self.animation_type = animation_type
         self.colors = colors
-        self.color = color
+        self.color = self.colors[0] if self.colors else (255, 255, 255)
         self.num_pixels = num_pixels
         self.start_index = start_index
         self.loop_duration = loop_duration

@@ -68,7 +68,7 @@ export default function ConfigBuilder({
     };
     
     if (builderType === 'static') {
-      newAnim.color = hexToRgb(builderColor);
+      newAnim.colors = [hexToRgb(builderColor)]
     } else if (builderType === 'rotating') {
       newAnim.colors = builderColorList.map(hex => hexToRgb(hex));
     }
@@ -102,8 +102,8 @@ export default function ConfigBuilder({
     setBuilderLoopDuration(anim.loop_duration || 5.0);
     setBuilderTargetFps(anim.target_fps || 30);
     
-    if (anim.animation_type === 'static' && anim.color) {
-      setBuilderColor(rgbToHex(anim.color[0], anim.color[1], anim.color[2]));
+    if (anim.animation_type === 'static' && anim.colors) {
+      setBuilderColor(rgbToHex(anim.colors[0][0], anim.colors[0][1], anim.colors[0][2]));
     } else if (anim.animation_type === 'rotating' && anim.colors) {
       setBuilderColorList(anim.colors.map(c => rgbToHex(c[0], c[1], c[2])));
     }
